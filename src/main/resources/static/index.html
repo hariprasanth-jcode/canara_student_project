@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Student Management System — Manage student records with a modern, intuitive interface." />
+  <title>Student Management System</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ========== Navbar ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar__brand">
+      <div class="navbar__brand-icon">🎓</div>
+      <span>StudentHub</span>
+    </div>
+    <div class="navbar__actions">
+      <button class="btn btn--ghost btn--sm" id="btn-refresh" title="Refresh data">
+        🔄 Refresh
+      </button>
+      <form action="/logout" method="post" style="display: inline-block;">
+        <button type="submit" class="btn btn--secondary btn--sm" id="btn-logout" title="Log out">
+          🚪 Logout
+        </button>
+      </form>
+    </div>
+  </nav>
+
+  <!-- ========== Main Content ========== -->
+  <main class="container">
+
+    <!-- Stats Row -->
+    <section class="stats-row" id="stats-row">
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--students">👥</div>
+        <div>
+          <div class="stat-card__value" id="stat-total">—</div>
+          <div class="stat-card__label">Total Students</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--avg">📊</div>
+        <div>
+          <div class="stat-card__value" id="stat-avg">—</div>
+          <div class="stat-card__label">Avg Percentage</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--top">⭐</div>
+        <div>
+          <div class="stat-card__value" id="stat-top">—</div>
+          <div class="stat-card__label">Top Scorer</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--sections">📁</div>
+        <div>
+          <div class="stat-card__value" id="stat-sections">—</div>
+          <div class="stat-card__label">Sections</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Toolbar -->
+    <div class="toolbar" id="toolbar">
+      <div class="search-box">
+        <span class="search-box__icon">🔍</span>
+        <input
+          type="text"
+          class="search-box__input"
+          id="search-input"
+          placeholder="Search students by name, email, grade…"
+          autocomplete="off"
+        />
+      </div>
+      <button class="btn btn--primary" id="btn-add-student">
+        ➕ Add Student
+      </button>
+    </div>
+
+    <!-- Table Card -->
+    <section class="table-card" id="table-card">
+      <div class="table-card__header">
+        <h1 class="table-card__title">Student Records</h1>
+        <span class="table-card__count" id="table-count">0 students</span>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table" id="data-table">
+          <thead>
+            <tr>
+              <th data-sort="id">ID <span class="sort-icon">⇅</span></th>
+              <th data-sort="name">Name <span class="sort-icon">⇅</span></th>
+              <th data-sort="email">Email <span class="sort-icon">⇅</span></th>
+              <th data-sort="percentage">Percentage <span class="sort-icon">⇅</span></th>
+              <th data-sort="grade">Grade <span class="sort-icon">⇅</span></th>
+              <th data-sort="section">Section <span class="sort-icon">⇅</span></th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Rows inserted by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-container" id="pagination-container">
+        <div class="pagination-info">
+          Showing <span id="pagination-start">0</span> to <span id="pagination-end">0</span> of <span id="pagination-total">0</span> students
+        </div>
+        <div class="pagination-controls">
+          <button class="btn btn--secondary btn--sm" id="btn-prev" disabled>Previous</button>
+          <div class="pagination-pages" id="pagination-pages"></div>
+          <button class="btn btn--secondary btn--sm" id="btn-next" disabled>Next</button>
+        </div>
+        <div class="pagination-size">
+          <label for="page-size-select">Page Size:</label>
+          <select id="page-size-select" class="pagination-size-select">
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Empty state (hidden by default) -->
+      <div class="empty-state" id="empty-state" style="display: none;">
+        <div class="empty-state__icon">📭</div>
+        <div class="empty-state__title">No students found</div>
+        <div class="empty-state__text">Add your first student to get started or adjust your search.</div>
+        <button class="btn btn--primary" id="btn-add-empty">➕ Add Student</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== Add / Edit Modal ========== -->
+  <div class="modal-overlay" id="modal-add">
+    <div class="modal">
+      <div class="modal__header">
+        <h2 class="modal__title" id="modal-add-title">Add New Student</h2>
+        <button class="modal__close" id="modal-add-close" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal__body">
+        <form id="student-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="form-name">Full Name</label>
+            <input class="form-input" type="text" id="form-name" placeholder="e.g. John Doe" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="form-email">Email Address</label>
+            <input class="form-input" type="email" id="form-email" placeholder="e.g. john@example.com" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="form-percentage">Percentage</label>
+              <input class="form-input" type="number" id="form-percentage" placeholder="e.g. 85.5" min="0" max="100" step="0.1" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-grade">Grade</label>
+              <input class="form-input" type="text" id="form-grade" placeholder="e.g. A+" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="form-section">Section</label>
+            <input class="form-input" type="text" id="form-section" placeholder="e.g. A" />
+          </div>
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--secondary" id="modal-add-cancel">Cancel</button>
+        <button class="btn btn--primary" id="modal-add-submit">Add Student</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Delete Confirm Modal ========== -->
+  <div class="modal-overlay" id="modal-delete">
+    <div class="modal">
+      <div class="modal__header">
+        <h2 class="modal__title">Confirm Deletion</h2>
+        <button class="modal__close" id="modal-delete-close" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal__body">
+        <div class="confirm-body">
+          <div class="confirm-body__icon">⚠️</div>
+          <p class="confirm-body__text">
+            Are you sure you want to delete <strong id="delete-student-name">this student</strong>?
+            This action cannot be undone.
+          </p>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--secondary" id="modal-delete-cancel">Cancel</button>
+        <button class="btn btn--danger" id="modal-delete-confirm">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Toast Container ========== -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
