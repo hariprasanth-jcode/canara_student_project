@@ -68,6 +68,7 @@
     btnNext:             $('#btn-next'),
     paginationPages:     $('#pagination-pages'),
     pageSizeSelect:      $('#page-size-select'),
+    btnThemeToggle:      $('#btn-theme-toggle'),
   };
 
   // ---------- API Helpers ----------
@@ -695,10 +696,31 @@
     $$('.data-table th[data-sort]').forEach(th => {
       th.addEventListener('click', () => handleSort(th.dataset.sort));
     });
+
+    // Theme Toggle
+    dom.btnThemeToggle.addEventListener('click', toggleTheme);
+  }
+
+  // ---------- Theme Handler ----------
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    dom.btnThemeToggle.textContent = savedTheme === 'light' ? '☀️' : '🌙';
+  }
+
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    dom.btnThemeToggle.textContent = newTheme === 'light' ? '☀️' : '🌙';
+    showToast(`Switched to ${newTheme} mode!`);
   }
 
   // ---------- Init ----------
   function init() {
+    initTheme();
     bindEvents();
     loadStudents();
   }

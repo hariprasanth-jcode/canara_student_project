@@ -11,6 +11,7 @@
   --bg-card: rgba(30, 41, 59, 0.55);
   --bg-card-hover: rgba(30, 41, 59, 0.75);
   --bg-input: rgba(15, 23, 42, 0.7);
+  --bg-th: rgba(15, 23, 42, 0.4);
 
   /* Surface / Glass */
   --glass-border: rgba(148, 163, 184, 0.12);
@@ -45,6 +46,39 @@
   /* Transition */
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --duration: 0.25s;
+}
+
+:root[data-theme="light"] {
+  /* Background */
+  --bg-primary: #f3f4f6;
+  --bg-secondary: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.7);
+  --bg-card-hover: rgba(255, 255, 255, 0.9);
+  --bg-input: rgba(243, 244, 246, 0.8);
+  --bg-th: rgba(229, 231, 235, 0.5);
+
+  /* Surface / Glass */
+  --glass-border: rgba(99, 102, 241, 0.15);
+  --glass-shadow: 0 8px 32px rgba(99, 102, 241, 0.08);
+  --glass-blur: 16px;
+
+  /* Accent Gradient */
+  --accent-start: #4f46e5;
+  --accent-end: #7c3aed;
+  --accent-gradient: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  --accent-glow: 0 0 20px rgba(79, 70, 229, 0.15);
+
+  /* Text */
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --text-accent: #6d28d9;
+
+  /* Status */
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.12);
+  --error: #ef4444;
+  --error-bg: rgba(239, 68, 68, 0.12);
 }
 
 /* ---------- Reset & Base ---------- */
@@ -387,7 +421,7 @@ body::before {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
-  background: rgba(15, 23, 42, 0.4);
+  background: var(--bg-th);
   border-bottom: 1px solid var(--glass-border);
   cursor: pointer;
   user-select: none;

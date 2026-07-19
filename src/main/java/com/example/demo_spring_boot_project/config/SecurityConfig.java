@@ -19,7 +19,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated() // All other requests require authentication
             )
             .formLogin(form -> form
-                .defaultSuccessUrl("/index.html", false) // Redirect back to original target (e.g. index.html or swagger) after login
+                .defaultSuccessUrl("/index.html", true) // Redirect back to original target (e.g. index.html or swagger) after login
             )
             .logout(Customizer.withDefaults()) // Enable default logout redirect to /login?logout
             .build();
