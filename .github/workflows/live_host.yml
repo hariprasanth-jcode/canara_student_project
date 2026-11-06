@@ -29,8 +29,6 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -62,17 +60,14 @@ jobs:
           echo "Starting Cloudflare Tunnel to port 8080..."
           cloudflared tunnel --url http://localhost:8080 > tunnel.log 2>&1 &
           sleep 12
-          TUNNEL_URL=$(grep -o 'https://[-a-zA-Z0-9.]*\.trycloudflare\.com' tunnel.log | head -n 1)
+          TUNNEL_URL=$(grep -o 'https://[-a-zA-Z0-9.]*trycloudflare.com' tunnel.log | head -n 1)
           echo "=================================================="
-          echo "🌐 LIVE PUBLIC URL: $TUNNEL_URL"
+          echo "LIVE PUBLIC URL: $TUNNEL_URL"
           echo "=================================================="
-          
-          # Create an issue with the live URL so the user can easily see it
-          curl -s -X POST https://api.github.com/repos/${{ github.repository }}/issues             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}"             -H "Accept: application/vnd.github+json"             -d '{"title": "🌐 Live Spring Boot App URL: '"$TUNNEL_URL"'", "body": "Your Spring Boot + PostgreSQL app is running live!
-
-**Live URL**: '"$TUNNEL_URL"'
-
-Click the link above to use the app in your browser."}' || true
+          echo "### 🌐 Live Spring Boot Application is Running!" >> $GITHUB_STEP_SUMMARY
+          echo "- **Live URL**: $TUNNEL_URL" >> $GITHUB_STEP_SUMMARY
+          echo "- **Database**: PostgreSQL 15 Connected" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: Ready to accept requests" >> $GITHUB_STEP_SUMMARY
 
       - name: Keep Server Running & Stream Live Logs
         run: |
